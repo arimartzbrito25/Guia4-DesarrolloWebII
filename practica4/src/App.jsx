@@ -4,11 +4,16 @@ import { FilterByCategory } from './components/FilterByCategory'
 import { ExpenseList } from './components/ExpenseList'
 import ExpenseModal from './components/ExpenseModal'
 import { useContext, useEffect } from 'react'
-import { BudgetStateContext } from './context/BudgetContext'
+import { BudgetStateContext, BudgetDispatchContext } from './context/BudgetContext'
 
 function App() {
   const state = useContext(BudgetStateContext)
+  const dispatch = useContext(BudgetDispatchContext)
   const isValidBudget = state.budget > 0
+
+  const handleResetApp = () => {
+    dispatch({ type: 'reset-app' })
+  }
 
   useEffect(() => {
     localStorage.setItem('budget', state.budget)
@@ -20,10 +25,19 @@ function App() {
 
   return (
     <>
-      <header className="bg-blue-600 py-8 max-h-72">
+      <header className="bg-blue-600 py-8 max-h-72 relative">
         <h1 className="uppercase text-center font-black text-4xl text-white">
           Planificador de gastos
         </h1>
+        {isValidBudget && (
+          <button
+            type="button"
+            onClick={handleResetApp}
+            className="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-bold rounded-lg uppercase text-sm"
+          >
+            Resetear App
+          </button>
+        )}
       </header>
 
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">

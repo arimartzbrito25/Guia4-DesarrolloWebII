@@ -52,6 +52,14 @@ export const budgetReducer = (state, action) => {
       }
     case "add-filter-category":
       return { ...state, currentCategory: action.payload.category }
+    case "reset-app":   // 2. Boton para resetear la app, elimina el presupuesto y los gastos
+      return {
+        budget: 0,
+        expenses: [],
+        modal: false,
+        editingId: '',
+        currentCategory: '',
+      }
     default:
       return state
   }

@@ -51,6 +51,18 @@ export const ExpenseForm = () => {
       setError('Todos los Campos son Obligatorios')
       return
     }
+    const currentTotal = state.expenses.reduce((acc, e) => acc + e.amount, 0)
+    let newTotal
+    if (state.editingId) {
+      const oldExpense = state.expenses.find((e) => e.id === expense.id)
+      newTotal = currentTotal - (oldExpense?.amount ?? 0) + expense.amount
+    } else {
+      newTotal = currentTotal + expense.amount
+    }
+    if (newTotal > state.budget) {
+      setError('El total de gastos no puede exceder el presupuesto inicial')
+      return
+    }
     if (state.editingId) {
       dispatch({ type: 'update-expense', payload: { expense } })
     } else {
