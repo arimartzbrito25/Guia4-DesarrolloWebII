@@ -1,12 +1,58 @@
+const getInitialBudget = () => {
+  const stored = localStorage.getItem('budget')
+  return stored ? Number(stored) : 0
+}
+
+const getInitialExpenses = () => {
+  try {
+    const stored = localStorage.getItem('expenses')
+    return stored ? JSON.parse(stored) : []
+  } catch {
+    return []
+  }
+}
+
 export const initialState = {
-    budget: 0,
+  budget: getInitialBudget(),
+  expenses: getInitialExpenses(),
+  modal: false,
+  editingId: '',
+  currentCategory: '',
 }
 
 export const budgetReducer = (state, action) => {
-    switch (action.type) {
-        case "add-budget":
-            return {...state, budget: action.payload.budget}
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case "add-budget":
+      return { ...state, budget: action.payload.budget }
+    case "show-modal":
+      return { ...state, modal: true }
+    case "close-modal":
+      return { ...state, modal: false, editingId: '' }
+    case "get-expense-by-id":
+      return { ...state, editingId: action.payload.id, modal: true }
+    case "update-expense":
+      return {
+        ...state,
+        expenses: state.expenses.map((e) =>
+          e.id === action.payload.expense.id ? action.payload.expense : e
+        ),
+        modal: false,
+        editingId: '',
+      }
+    case "add-expense":
+      return {
+        ...state,
+        expenses: [...state.expenses, { ...action.payload.expense, id: new Date().getTime() }],
+        modal: false,
+      }
+    case "remove-expense":
+      return {
+        ...state,
+        expenses: state.expenses.filter((e) => e.id !== action.payload.id),
+      }
+    case "add-filter-category":
+      return { ...state, currentCategory: action.payload.category }
+    default:
+      return state
+  }
 }
